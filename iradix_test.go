@@ -1,9 +1,11 @@
 package index_bench
 
 import (
+	"fmt"
 	"github.com/hashicorp/go-immutable-radix/v2"
 	"math/rand"
 	"os"
+	"runtime"
 	"testing"
 	"time"
 )
@@ -18,7 +20,16 @@ func TestIRadix(t *testing.T) {
 		tree, _, _ = tree.Insert(GetTestKey(i), RandomValue(4096))
 	}
 	t.Log("time cost:", time.Since(now))
-	time.Sleep(time.Hour)
+
+	var stat runtime.MemStats
+	runtime.ReadMemStats(&stat)
+	// 转换为兆字节
+	totalMemory := float64(stat.Alloc) / 1024 / 1024
+	heapMemory := float64(stat.HeapAlloc) / 1024 / 1024
+
+	fmt.Printf("总内存使用量：%.2f MB\n", totalMemory)
+	fmt.Printf("堆内存使用量：%.2f MB\n", heapMemory)
+	//time.Sleep(time.Hour)
 }
 
 var tree = iradix.New[[]byte]()

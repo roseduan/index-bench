@@ -2,9 +2,11 @@ package index_bench
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/google/btree"
 	"math/rand"
 	"os"
+	"runtime"
 	"testing"
 	"time"
 )
@@ -29,7 +31,14 @@ func TestBTree(t *testing.T) {
 	}
 
 	t.Log("time cost:", time.Since(now))
-	time.Sleep(time.Hour)
+	var stat runtime.MemStats
+	runtime.ReadMemStats(&stat)
+	// 转换为兆字节
+	totalMemory := float64(stat.Alloc) / 1024 / 1024
+	heapMemory := float64(stat.HeapAlloc) / 1024 / 1024
+
+	fmt.Printf("总内存使用量：%.2f MB\n", totalMemory)
+	fmt.Printf("堆内存使用量：%.2f MB\n", heapMemory)
 }
 
 var btreeInstance = btree.New(32)
